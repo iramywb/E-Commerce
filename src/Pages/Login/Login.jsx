@@ -4,18 +4,21 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useContext, useState } from "react";
-import { CounterContext } from '../../Context/CounterContext';
+import { TokenContext } from '../../Context/TokenContext';
 
 export default function Login() {
     
       const [error, setError] = useState(null);
       const navigate = useNavigate();
+      const { setToken } = useContext(TokenContext);
       async function handleLogin(data) {
         await axios
           .post("https://ecommerce.routemisr.com/api/v1/auth/signin", data)
           .then((res) => {
             setError(null);
             navigate("/");
+            setToken(res.data.token);
+            localStorage.setItem('token', res.data.token);
           }).catch((err) => {
             setError(err.response.data.message);
           });
