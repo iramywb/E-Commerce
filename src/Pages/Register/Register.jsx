@@ -4,34 +4,34 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 
 export default function Register() {
-  
   // function validate(values) {
-    //   let errors = {};
-    
-    //   let nameReg = /^[a-zA-Z\s]+$/;
-    //   let emailReg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    //   let passwordReg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    //   let phoneReg = /^01[0125][0-9]{8}$/;
-    
-    //   if (!values.name) {
-      //     errors.name = "Name is required";
-      //   } else if (values.name.length < 3) {
-        //     errors.name = "Name must be at least 3 characters";
-        //   } else if (values.name.length > 20) {
+  //   let errors = {};
+
+  //   let nameReg = /^[a-zA-Z\s]+$/;
+  //   let emailReg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  //   let passwordReg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  //   let phoneReg = /^01[0125][0-9]{8}$/;
+
+  //   if (!values.name) {
+  //     errors.name = "Name is required";
+  //   } else if (values.name.length < 3) {
+  //     errors.name = "Name must be at least 3 characters";
+  //   } else if (values.name.length > 20) {
   //     errors.name = "Name must be less than 20 characters";
   //   } else if (!nameReg.test(values.name)) {
   //     errors.name = "Name must contain only letters and spaces";
   //   }
 
   //   if (!values.email) {
-    //     errors.email = "Email is required";
-    //   } else if (!emailReg.test(values.email)) {
-      //     errors.email = "Invalid email format";
-      //   }
-      
-      //   if (!values.password) {
+  //     errors.email = "Email is required";
+  //   } else if (!emailReg.test(values.email)) {
+  //     errors.email = "Invalid email format";
+  //   }
+
+  //   if (!values.password) {
   //     errors.password = "Password is required";
   //   } else if (!passwordReg.test(values.password)) {
   //     errors.password = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character";
@@ -40,29 +40,30 @@ export default function Register() {
   //   if (!values.rePassword) {
   //     errors.rePassword = "Re-password is required";
   //   } else if (values.rePassword !== values.password) {
-    //     errors.rePassword = "Passwords do not match";
-    //   }
-    
-    //   if (!values.phone) {
-      //     errors.phone = "Phone number is required";
+  //     errors.rePassword = "Passwords do not match";
+  //   }
+
+  //   if (!values.phone) {
+  //     errors.phone = "Phone number is required";
   //   } else if (!phoneReg.test(values.phone)) {
-    //     errors.phone = "Invalid phone number format";
-    //   }
-    
-    //   return errors;
-    // }
-    
-      const [error, setError] = useState(null);
-      const navigate = useNavigate();
-      async function handleRegister(data) {
-        await axios
-          .post("https://ecommerce.routemisr.com/api/v1/auth/signup", data)
-          .then((res) => {
-            setError(null);
-            navigate("/login");
-          }).catch((err) => {
-            setError(err.response.data.message);
-          });
+  //     errors.phone = "Invalid phone number format";
+  //   }
+
+  //   return errors;
+  // }
+
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  async function handleRegister(data) {
+    await axios
+      .post("https://ecommerce.routemisr.com/api/v1/auth/signup", data)
+      .then((res) => {
+        setError(null);
+        navigate("/login");
+      })
+      .catch((err) => {
+        setError(err.response.data.message);
+      });
   }
 
   const validationSchema = Yup.object({
@@ -109,12 +110,17 @@ export default function Register() {
 
   return (
     <section className="dark:bg-gray-900">
+      <Helmet>
+        <title>Register</title>
+      </Helmet>
       <form
         className="w-1/2 mx-auto bg-gray-50 shadow p-3"
         onSubmit={formik.handleSubmit}
       >
         <h1 className="text-3xl text-center font-bold my-5">Register Now</h1>
-        {error && <div className="bg-red-500 text-white p-2 rounded">{error}</div>}
+        {error && (
+          <div className="bg-red-500 text-white p-2 rounded">{error}</div>
+        )}
         <div className="mb-5">
           <label
             htmlFor="name"
@@ -127,7 +133,7 @@ export default function Register() {
             type="text"
             id="name"
             name="name"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
             placeholder="Enter your name"
             value={formik.values.name}
             onBlur={formik.handleBlur}
@@ -150,7 +156,7 @@ export default function Register() {
             type="email"
             id="email"
             name="email"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
             placeholder="Enter your email"
             value={formik.values.email}
             onBlur={formik.handleBlur}
@@ -173,7 +179,7 @@ export default function Register() {
             type="password"
             id="password"
             name="password"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
             placeholder="Enter your password"
             value={formik.values.password}
             onBlur={formik.handleBlur}
@@ -196,7 +202,7 @@ export default function Register() {
             type="password"
             id="rePassword"
             name="rePassword"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
             placeholder="Repeat your password"
             value={formik.values.rePassword}
             onBlur={formik.handleBlur}
@@ -219,7 +225,7 @@ export default function Register() {
             type="tel"
             id="phone"
             name="phone"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
             placeholder="Enter your phone number"
             value={formik.values.phone}
             onBlur={formik.handleBlur}
@@ -233,13 +239,13 @@ export default function Register() {
         <button
           disabled={!formik.isValid || !formik.dirty || formik.isSubmitting}
           type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {formik.isSubmitting ? "Registering..." : "Register"}
         </button>
         <small>
           {"Already have an account? "}
-          <Link to={"/login"} className="text-blue-600 hover:underline">
+          <Link to={"/login"} className="text-green-600 hover:underline">
             Login
           </Link>
         </small>

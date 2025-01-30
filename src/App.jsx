@@ -9,6 +9,12 @@ import TokenProvider from "./Context/TokenContext";
 import ProtectedRoutes from "./Components/ProtectedRoutes/ProtectedRoutes";
 import Cart from "./Pages/Cart/Cart";
 import Categories from "./Pages/Categories/Categories";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import NotFound from "./Pages/NotFound/NotFound";
+import ProductDetails from "./Pages/ProductDetails/ProductDetails";
+import { MdOutlineWifiOff } from "react-icons/md";
+import { Offline } from "react-detect-offline";
 
 export default function App() {
   const routes = createBrowserRouter([
@@ -38,7 +44,7 @@ export default function App() {
             <ProtectedRoutes>
               <Cart />
             </ProtectedRoutes>
-          )
+          ),
         },
         {
           path: "categories",
@@ -46,16 +52,28 @@ export default function App() {
             <ProtectedRoutes>
               <Categories />
             </ProtectedRoutes>
-          )
+          ),
+        },
+        {
+          path: "product/:id",
+          element: (
+            <ProtectedRoutes>
+              <ProductDetails />
+            </ProtectedRoutes>
+          ),
         },
         { path: "login", element: <Login /> },
         { path: "register", element: <Register /> },
+        { path: "*", element: <NotFound /> },
       ],
     },
   ]);
   return (
     <TokenProvider>
       <CounterProvider>
+        <Offline>
+          <small className="fixed bottom-2 right-4 bg-red-500 text-white p-3 rounded z-50"><MdOutlineWifiOff className="inline text-xl mr-3" /> You are offline, check your internet connection</small>
+        </Offline>
         <RouterProvider router={routes} />
       </CounterProvider>
     </TokenProvider>

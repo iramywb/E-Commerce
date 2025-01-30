@@ -1,7 +1,13 @@
-import style from './Cart.module.css'
+import { Helmet } from "react-helmet";
+import style from "./Cart.module.css";
 
 export default function Cart() {
   return (
-    <div>Cart</div>
-  )
+    <div>
+      <Helmet>
+        <title>Cart</title>
+      </Helmet>
+      Cart
+    </div>
+  );
 }

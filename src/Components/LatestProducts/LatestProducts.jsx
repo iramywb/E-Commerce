@@ -1,8 +1,8 @@
 import axios from "axios";
 import style from "./LatestProducts.module.css";
 import { useEffect, useState } from "react";
-import { FaS, FaStar } from "react-icons/fa6";
 import ProductItem from "../ProductItem/ProductItem";
+import Loader from "../Loader/Loader";
 
 export default function LatestProducts() {
   const [products, setProducts] = useState([]);
@@ -20,12 +20,12 @@ export default function LatestProducts() {
     <div className="row">
       {products.length > 0 ? (
         products.map((product) => (
-          <div className="w-1/5 p-2" key={product.id}>
+          <div className="p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 2xl:w-1/6" key={product.id}>
             <ProductItem product={product} />
           </div>
         ))
       ) : (
-        <h1>Loading..</h1>
+        <Loader />
       )}
     </div>
   );

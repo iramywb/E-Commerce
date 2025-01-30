@@ -1,20 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Encode+Sans+Expanded:wght@300&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+.slick-prev:before, .slick-next:before {
+    color: rgb(5 122 85 / var(--tw-text-opacity, 1)) !important;
+}
 @layer components {
+    body {
+        font-family: "Encode Sans Expanded", sans-serif !important;
+    }
     .active {
-        border-bottom: 1px solid #000 !important;
-        border-radius: 0px !important;
+        font-weight: 800 !important;
+        color: rgb(5 122 85 / var(--tw-text-opacity, 1)) !important;
     }
     .row {
         @apply flex flex-wrap;
     }
     .btn {
-        @apply text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800;
+        @apply select-none cursor-pointer text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800;
+    }
+    .inner {
+        @apply p-2;
     }
     .product {
-        /* border transparent at normal and green on hover */
-        @apply cursor-pointer border border-transparent hover:border-green-600 rounded-lg p-2 transition duration-300 ease-in-out;
+        @apply border border-transparent hover:border-green-600 rounded-lg transition duration-300 ease-in-out;
+    }
+    .product .btn {
+        @apply w-full translate-y-1/4 opacity-0 transition duration-300 ease-in-out mt-2;
+    }
+    .product:hover .btn {
+        @apply translate-y-0 opacity-100;
     }
 }
