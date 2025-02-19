@@ -4,7 +4,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useState } from "react";
-import { Helmet } from "react-helmet";
 
 export default function Register() {
   // function validate(values) {
@@ -110,9 +109,6 @@ export default function Register() {
 
   return (
     <section className="dark:bg-gray-900">
-      <Helmet>
-        <title>Register</title>
-      </Helmet>
       <form
         className="w-1/2 mx-auto bg-gray-50 shadow p-3"
         onSubmit={formik.handleSubmit}

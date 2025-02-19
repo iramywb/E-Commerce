@@ -2,7 +2,7 @@ import { createContext, useState } from "react";
 
 export const TokenContext = createContext()
 
-export default function TokenProvider({children}) {
+export default function TokenContextProvider({children}) {
     const [token, setToken] = useState(localStorage.getItem('token'));
 
     return (

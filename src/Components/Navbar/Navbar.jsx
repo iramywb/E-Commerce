@@ -26,7 +26,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-slate-100 border-gray-200 dark:bg-gray-900">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <div className="max-w-screen-xl flex justify-between flex-wrap items-center mx-auto p-4">
         <div className="flex gap-4 justify-between w-full md:w-auto">
           <Link
             to={"/"}
@@ -51,18 +51,33 @@ export default function Navbar() {
               fill="none"
               viewBox="0 0 17 14"
             >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M1 1h15M1 7h15M1 13h15"
-              />
+              {isOpen ? (
+                // Cross icon (X)
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M1 1l15 12M1 13l15-12"
+                />
+              ) : (
+                // Hamburger menu icon (three lines)
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M1 1h15M1 7h15M1 13h15"
+                />
+              )}
             </svg>
           </button>
         </div>
+        {/* class to make it in flex be at the center */}
         <div
-          className={`${isOpen ? "block" : "hidden"} w-full md:block md:w-auto`}
+          className={`${
+            isOpen ? "max-h-96" : "max-h-0 delay-100"
+          } w-full duration-300 ease-linear overflow-hidden md:max-h-96 md:w-auto`}
           id="navbar-default"
         >
           {token && (
@@ -105,7 +120,9 @@ export default function Navbar() {
           )}
         </div>
         <div
-          className={`${isOpen ? "block" : "hidden"} w-full md:flex sm:gap-4 md:w-auto`}
+          className={`${
+            isOpen ? "max-h-96 delay-100" : "max-h-0"
+          } duration-300 ease-linear overflow-hidden md:max-h-96 w-full md:flex sm:gap-4 md:w-auto`}
         >
           <ul className="font-medium flex justify-center items-center p-4 md:p-0 border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
             <li>
