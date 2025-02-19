@@ -1,12 +1,14 @@
 import { FaCartShopping, FaStar } from "react-icons/fa6";
-import style from "./ProductItem.module.css";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { CartContext } from "../../Context/CartContext";
 
 export default function ProductItem({ product }) {
+  const { addToCart } = useContext(CartContext);
   return (
-    <Link to={`/product/${product.id}`}>
-      <div className="product inner p-2">
+    <div className="product inner p-2">
+      <Link to={`/product/${product.id}`}>
         <img src={product.imageCover} className="w-full" alt="" />
         <small className="text-green-600">{product.category?.name}</small>
         <h5 className="font-semibold line-clamp-1">{product.title}</h5>
@@ -16,11 +18,14 @@ export default function ProductItem({ product }) {
             <FaStar className="text-yellow-300" /> {product.ratingsAverage}
           </span>
         </div>
-        <button className="btn block text-center font-semibold">
-          Add to cart <FaCartShopping className="inline text-lg" />
-        </button>
-      </div>
-    </Link>
+      </Link>
+      <button
+        className="btn block text-center font-semibold"
+        onClick={() => addToCart(product.id)}
+      >
+        Add to cart <FaCartShopping className="inline text-lg" />
+      </button>
+    </div>
   );
 }
 

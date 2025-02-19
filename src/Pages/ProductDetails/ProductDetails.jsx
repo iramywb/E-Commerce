@@ -1,14 +1,15 @@
 import { Link, useParams } from "react-router-dom";
 import style from "./ProductDetails.module.css";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaHome, FaStar } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import Slider from "react-slick";
-import { Helmet } from "react-helmet";
+import { CartContext } from "../../Context/CartContext";
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const { addToCart } = useContext(CartContext);
 
   const [product, setProduct] = useState({});
 
@@ -23,6 +24,11 @@ export default function ProductDetails() {
     autoplaySpeed: 2000,
   };
 
+  async function addProduct(id) {
+    let res = await addToCart(id);
+    console.log(res);
+  }
+
   async function getProduct() {
     await axios
       .get(`https://ecommerce.routemisr.com/api/v1/products/${id}`)
@@ -31,13 +37,10 @@ export default function ProductDetails() {
   }
   useEffect(() => {
     getProduct();
-  }, []);
+  }, [id]);
   if (product)
     return (
       <div className="flex items-center">
-        <Helmet>
-          <title>{product.title}</title>
-        </Helmet>
         <div className="w-1/4">
           <Slider {...settings}>
             {product.images?.map((image, i) => (
@@ -58,7 +61,10 @@ export default function ProductDetails() {
                 <FaStar className="text-yellow-300" /> {product.ratingsAverage}
               </span>
             </div>
-            <div className="btn text-center ">
+            <div
+              className="btn text-center "
+              onClick={() => addProduct(product.id)}
+            >
               Add to cart <FaCartShopping className="inline text-lg" />
             </div>
           </div>
@@ -68,9 +74,6 @@ export default function ProductDetails() {
   else
     return (
       <div className="flex flex-col gap-3 justify-center items-center">
-        <Helmet>
-          <title>Item | Not Found</title>
-        </Helmet>
         <p className="m-auto">Item Not Found</p>
         <Link className="btn" to={"/"}>
           Go to home page <FaHome className="inline" />

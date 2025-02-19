@@ -5,7 +5,7 @@ import Products from "./Pages/Products/Products";
 import Login from "./Pages/Login/Login";
 import Register from "./Pages/Register/Register";
 import CounterProvider from "./Context/CounterContext";
-import TokenProvider from "./Context/TokenContext";
+import TokenContextProvider from "./Context/TokenContext";
 import ProtectedRoutes from "./Components/ProtectedRoutes/ProtectedRoutes";
 import Cart from "./Pages/Cart/Cart";
 import Categories from "./Pages/Categories/Categories";
@@ -15,6 +15,8 @@ import NotFound from "./Pages/NotFound/NotFound";
 import ProductDetails from "./Pages/ProductDetails/ProductDetails";
 import { MdOutlineWifiOff } from "react-icons/md";
 import { Offline } from "react-detect-offline";
+import { Toaster } from "react-hot-toast";
+import CartContextProvider from "./Context/CartContext";
 
 export default function App() {
   const routes = createBrowserRouter([
@@ -69,13 +71,19 @@ export default function App() {
     },
   ]);
   return (
-    <TokenProvider>
-      <CounterProvider>
-        <Offline>
-          <small className="fixed bottom-2 right-4 bg-red-500 text-white p-3 rounded z-50"><MdOutlineWifiOff className="inline text-xl mr-3" /> You are offline, check your internet connection</small>
-        </Offline>
-        <RouterProvider router={routes} />
-      </CounterProvider>
-    </TokenProvider>
+    <TokenContextProvider>
+      <CartContextProvider>
+        <CounterProvider>
+          <Offline>
+            <small className="fixed bottom-2 right-4 bg-red-500 text-white p-3 rounded z-50">
+              <MdOutlineWifiOff className="inline text-xl mr-3" /> You are
+              offline, check your internet connection
+            </small>
+          </Offline>
+          <Toaster />
+          <RouterProvider router={routes} />
+        </CounterProvider>
+      </CartContextProvider>
+    </TokenContextProvider>
   );
 }
