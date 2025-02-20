@@ -7,7 +7,7 @@ import Loader from "../../Components/Loader/Loader";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import style from "./ProductDetails.module.css";
+import "./ProductDetails.module.css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import { WishlistContext } from "../../Context/WishlistContext";
