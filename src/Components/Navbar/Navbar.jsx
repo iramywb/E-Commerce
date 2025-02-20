@@ -1,18 +1,15 @@
 import { useContext, useState } from "react";
 import style from "./Navbar.module.css";
-import {
-  FaFacebook,
-  FaInstagram,
-  FaLinkedin,
-  FaTiktok,
-  FaYoutube,
-} from "react-icons/fa";
+import { FaRegHeart } from "react-icons/fa";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "./../../assets/images/freshcart-logo.svg";
 import { TokenContext } from "../../Context/TokenContext";
+import { MdOutlineShoppingCart } from "react-icons/md";
+import { CartContext } from "../../Context/CartContext";
 
 export default function Navbar() {
   const { token, setToken } = useContext(TokenContext);
+  const { cart } = useContext(CartContext);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -122,49 +119,30 @@ export default function Navbar() {
         <div
           className={`${
             isOpen ? "max-h-96 delay-100" : "max-h-0"
-          } duration-300 ease-linear overflow-hidden md:max-h-96 w-full md:flex sm:gap-4 md:w-auto`}
+          } duration-300 ease-linear overflow-hidden md:overflow-visible md:max-h-96 w-full md:flex sm:gap-4 md:w-auto`}
         >
-          <ul className="font-medium flex justify-center items-center p-4 md:p-0 border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+          <ul className="font-medium text-2xl flex justify-center items-center p-4 md:p-0 border border-gray-100 rounded-lg md:space-x-4 rtl:space-x-reverse md:mt-0">
             <li>
-              <a
-                href="#"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                aria-current="page"
+              <Link
+                to={"/cart"}
+                className="block relative space-x-2 text-gray-900 rounded md:border-0"
+                aria-current="cart"
               >
-                <FaFacebook />
-              </a>
+                <MdOutlineShoppingCart />
+                {cart && cart.numOfCartItems > 0 && (
+                  <span className="absolute bottom-full translate-y-1/2 right-0 translate-x-1/4 inline-flex items-center justify-center w-5 h-4 text-[0.65rem] font-semibold text-white bg-green-500 rounded-full">
+                    {cart.data.totalItems > 99 ? "+99" : cart.data.totalItems}
+                  </span>
+                )}
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+              <Link
+                to={"/wishlist"}
+                className="block py-2 px-3 text-gray-900 rounded md:border-0 md:p-0"
               >
-                <FaInstagram />
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >
-                <FaYoutube />
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >
-                <FaLinkedin />
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >
-                <FaTiktok />
-              </a>
+                <FaRegHeart />
+              </Link>
             </li>
           </ul>
           <ul className="flex justify-center gap-3">

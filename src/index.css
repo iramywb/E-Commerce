@@ -1,35 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Encode+Sans+Expanded:wght@300&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Encode+Sans+Expanded:wght@300&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-.slick-prev:before, .slick-next:before {
-    color: rgb(5 122 85 / var(--tw-text-opacity, 1)) !important;
+.slick-prev:before,
+.slick-next:before {
+  color: rgb(5 122 85 / var(--tw-text-opacity, 1)) !important;
 }
 @layer components {
-    body {
-        font-family: "Encode Sans Expanded", sans-serif !important;
-    }
-    .active {
-        font-weight: 800 !important;
-        color: rgb(5 122 85 / var(--tw-text-opacity, 1)) !important;
-    }
-    .row {
-        @apply flex flex-wrap;
-    }
-    .btn {
-        @apply select-none cursor-pointer text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800;
-    }
-    .inner {
-        @apply p-2;
-    }
-    .product {
-        @apply border border-transparent hover:border-green-600 rounded-lg transition duration-300 ease-in-out;
-    }
-    .product .btn {
-        @apply w-full translate-y-1/4 opacity-0 transition duration-300 ease-in-out mt-2;
-    }
-    .product:hover .btn {
-        @apply translate-y-0 opacity-100;
-    }
+  body {
+    font-family: "Encode Sans Expanded", sans-serif !important;
+  }
+  .active {
+    font-weight: 800 !important;
+    color: rgb(5 122 85 / var(--tw-text-opacity, 1)) !important;
+  }
+  .row {
+    @apply flex flex-wrap;
+  }
+  /* .btn {
+        @apply w-full select-none cursor-pointer text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none;
+    } */
+  .btn {
+    @apply flex items-center justify-center gap-2 rounded-lg border focus:outline-none p-2.5 text-sm font-semibold;
+  }
+  .inner {
+    @apply p-2;
+  }
+  .product {
+    @apply border border-transparent border-gray-100 hover:border-gray-400 transition duration-300 ease-in-out;
+  }
+  .product:hover .btn {
+    @apply translate-y-0 opacity-100;
+  }
 }

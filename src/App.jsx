@@ -14,9 +14,12 @@ import "slick-carousel/slick/slick-theme.css";
 import NotFound from "./Pages/NotFound/NotFound";
 import ProductDetails from "./Pages/ProductDetails/ProductDetails";
 import { MdOutlineWifiOff } from "react-icons/md";
-import { Offline } from "react-detect-offline";
+import { Detector, Offline } from "react-detect-offline";
 import { Toaster } from "react-hot-toast";
 import CartContextProvider from "./Context/CartContext";
+import WishlistContextProvider from "./Context/WishlistContext";
+import { DetectOffline } from "react-detect-offline";
+import Wishlist from "./Pages/Wishlist/Wishlist";
 
 export default function App() {
   const routes = createBrowserRouter([
@@ -57,6 +60,14 @@ export default function App() {
           ),
         },
         {
+          path: "wishlist",
+          element: (
+            <ProtectedRoutes>
+              <Wishlist />
+            </ProtectedRoutes>
+          ),
+        },
+        {
           path: "product/:id",
           element: (
             <ProtectedRoutes>
@@ -72,18 +83,20 @@ export default function App() {
   ]);
   return (
     <TokenContextProvider>
-      <CartContextProvider>
-        <CounterProvider>
-          <Offline>
-            <small className="fixed bottom-2 right-4 bg-red-500 text-white p-3 rounded z-50">
-              <MdOutlineWifiOff className="inline text-xl mr-3" /> You are
-              offline, check your internet connection
-            </small>
-          </Offline>
-          <Toaster />
-          <RouterProvider router={routes} />
-        </CounterProvider>
-      </CartContextProvider>
+      <WishlistContextProvider>
+        <CartContextProvider>
+          <CounterProvider>
+            <Offline>
+              <small className="fixed bottom-2 right-4 bg-red-500 text-white p-3 rounded z-50">
+                <MdOutlineWifiOff className="inline text-xl mr-3" /> You are
+                offline, check your internet connection
+              </small>
+            </Offline>
+            <Toaster position="bottom-left" reverseOrder={true} />
+            <RouterProvider router={routes} />
+          </CounterProvider>
+        </CartContextProvider>
+      </WishlistContextProvider>
     </TokenContextProvider>
   );
 }
