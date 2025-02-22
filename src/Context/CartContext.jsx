@@ -139,9 +139,8 @@ export default function CartContextProvider({ children }) {
         return axios.delete(
           `https://ecommerce.routemisr.com/api/v1/cart/${id}`,
           headers
-        );
+        ).then(() => getCart());
       },
-      onSuccess: () => getCart(),
       onError: () => setCart(originalCart),
     });
   }
