@@ -141,6 +141,7 @@ export default function CartContextProvider({ children }) {
           headers
         );
       },
+      onSuccess: () => getCart(),
       onError: () => setCart(originalCart),
     });
   }
@@ -249,7 +250,6 @@ export default function CartContextProvider({ children }) {
   }
 
   function getCart() {
-    if (queueRef.current.filter((p) => p.type === "add").length > 1) return;
     return axios
       .get("https://ecommerce.routemisr.com/api/v1/cart", headers)
       .then(function (res) {
