@@ -1,179 +1,263 @@
 import axios from "axios";
 import { TokenContext } from "./TokenContext";
 import toast from "react-hot-toast";
-import { useContext, useEffect, useRef, useState } from "react";
-import { createContext } from "react";
+import { useContext, useEffect, useRef, useState, createContext } from "react";
 
 export const CartContext = createContext();
 
 export default function CartContextProvider({ children }) {
+  // Auth
   const { token, isAuth } = useContext(TokenContext);
+  // Cart API
   const [cart, setCart] = useState(null);
-  const [pendingRequests, setPendingRequests] = useState(new Set())
-  const requestQueueRef = useRef(Promise.resolve());
-  const updateTimeoutRef = useRef(null);
-  const headers = { token };
+  // Queue setup
+  const [pendingRequests, setPendingRequests] = useState(new Set());
+  const queueRef = useRef([]);
+  const isProcessingRef = useRef(false);
+  // Debounce
+  const updateTimeoutsRef = useRef(new Map());
+  // Headers
+  const headers = { headers: { token } };
 
-  function addRequest(id) {
-    setPendingRequests((prev) => new Set(prev).add(id)); // Add ID to the Set
-  };
+  async function processQueue() {
+    if (isProcessingRef.current) return;
+    isProcessingRef.current = true;
 
-  // Function to remove a request
-  function removeRequest(id) {
-    setPendingRequests((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(id); // Remove ID from the Set
-      return newSet;
-    });
-  };
+    while (queueRef.current.length > 0) {
+      const task = queueRef.current[0];
 
-  function addToCart(id) {
-    if (!pendingRequests.has(id)) {
-      addRequest(id)
-      const request = requestQueueRef.current.finally(() =>
-        axios
-          .post(
-            `https://ecommerce.routemisr.com/api/v1/cart/`,
-            { productId: id },
-            { headers }
-          )
-          .then(() => getCart()) // Backend mistakenly returns cart without full info like imageCover so i updated it with getCart() as a temporary fix
-          .catch((err) => Promise.reject(err))
-          .finally(() => {
-            removeRequest(id)
-          })
-      );
+      try {
+        const res = await toast.promise(
+          task.operation(),
+          {
+            loading: task.loadingMessage,
+            success: task.successMessage,
+            error: (err) => task.errorMessage(err),
+          },
+          {
+            id: task.toastId,
+          }
+        );
 
-      requestQueueRef.current = request;
+        task.onSuccess?.(res);
+      } catch (error) {
+        task.onError?.(error);
+      } finally {
+        queueRef.current.shift();
+        setPendingRequests((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(task.id);
+          return newSet;
+        });
+      }
+    }
 
-      toast.promise(request, {
-        loading: "Adding to cart...",
-        success: "Added to cart",
-        error: (err) =>
-          "Failed to add to cart: " + err.message || "Failed to add to cart",
-      });
+    isProcessingRef.current = false;
+  }
+
+  function addToQueue(task) {
+    const toastId = toast.loading(task.loadingMessage);
+
+    const taskWithToast = {
+      ...task,
+      toastId: toastId,
+    };
+
+    setPendingRequests((prev) => new Set([...prev, task.id]));
+    queueRef.current.push(taskWithToast);
+
+    if (!isProcessingRef.current) {
+      processQueue();
     }
   }
+
+  function addToCart(id) {
+    const originalCart = { ...cart };
+    setCart((prev) => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        totalItems: prev.data.totalItems + 1,
+        products: [
+          ...prev.data.products,
+          { product: { id: id }, count: 1, price: 0 },
+        ],
+      },
+    }));
+    console.log(cart)
+    addToQueue({
+      id,
+      type: "add",
+      loadingMessage: "Adding to cart...",
+      successMessage: "Added to cart",
+      errorMessage: function (err) {
+        return err.response?.data?.message || "Failed to add to cart";
+      },
+      operation: function () {
+        return axios.post(
+          "https://ecommerce.routemisr.com/api/v1/cart/",
+          { productId: id },
+          headers
+        ).then(() => getCart());
+      },
+      onError: () => setCart(originalCart),
+    });
+  }
+
   function removeFromCart(id) {
-    if (!pendingRequests.has(id)) {
-      addRequest(id)
-      const request = requestQueueRef.current.finally(() =>
-        axios
-          .delete(`https://ecommerce.routemisr.com/api/v1/cart/${id}`, {
-            headers,
-          })
-          .then((res) => cartHandler(res.data))
-          .catch((err) => Promise.reject(err))
-          .finally(() => removeRequest(id))
+    const originalCart = { ...cart };
+    setCart((prev) => {
+      const productIndex = prev.data.products.findIndex(
+        (p) => p.product.id === id
       );
 
-      requestQueueRef.current = request;
+      const product = prev.data.products[productIndex];
+      return {
+        ...prev,
+        numOfCartItems: prev.numOfCartItems - 1,
+        data: {
+          ...prev.data,
+          totalItems: prev.data.totalItems - product.count,
+          totalCartPrice:
+            prev.data.totalCartPrice - product.count * product.price,
+          products: prev.data.products.filter((p) => p.product.id !== id),
+        },
+      };
+    });
 
-      toast.promise(request, {
-        loading: "Removing from cart...",
-        success: "Removed from cart",
-        error: (err) =>
-          "Failed to remove from cart: " + err.message ||
-          "Failed to remove from cart",
-      });
-    }
+    addToQueue({
+      id,
+      type: "remove",
+      loadingMessage: "Removing from cart...",
+      successMessage: "Removed from cart",
+      errorMessage: function (err) {
+        return err.response?.data?.message || "Failed to remove from cart";
+      },
+      operation: function () {
+        return axios.delete(
+          `https://ecommerce.routemisr.com/api/v1/cart/${id}`,
+          headers
+        );
+      },
+      onError: () => setCart(originalCart),
+    });
   }
 
   function updateQuantity(id, quantity) {
-    console.log(requestQueueRef.length);
-    setCart((prevCart) => {
-      const index = prevCart?.data.products.findIndex(
-        (product) => product.product.id === id
+    if (updateTimeoutsRef.current.has(id)) {
+      clearTimeout(updateTimeoutsRef.current.get(id));
+    }
+
+    setCart((prev) => {
+      if (!prev) return prev;
+
+      const productIndex = prev.data.products.findIndex(
+        (p) => p.product.id === id
       );
-      if (index === -1) return prevCart;
 
-      const product = prevCart.data.products[index];
-      const oldQuantity = product.count;
-      const difference = quantity - oldQuantity;
+      if (productIndex === -1) return prev;
 
-      const totalCartPrice =
-        product.price * difference + prevCart.data.totalCartPrice;
+      const oldProduct = prev.data.products[productIndex];
+      const pricePerItem = oldProduct.price;
+      const quantityDifference = quantity - oldProduct.count;
+
+      const totalItems = prev.data.products.reduce(
+        (acc, item) => acc + item.count,
+        0
+      );
 
       return {
-        ...prevCart,
+        ...prev,
         data: {
-          ...prevCart.data,
-          totalCartPrice,
-          totalItems: prevCart.data.totalItems + difference,
-          products: prevCart.data.products.map((product, i) =>
-            index === i ? { ...product, count: quantity } : product
+          ...prev.data,
+          totalItems: totalItems + quantityDifference,
+          totalCartPrice:
+            prev.data.totalCartPrice + quantityDifference * pricePerItem,
+          products: prev.data.products.map((p) =>
+            p.product.id === id ? { ...p, count: quantity } : p
           ),
         },
       };
     });
 
-    if (updateTimeoutRef.current) clearTimeout(updateTimeoutRef.current);
+    updateTimeoutsRef.current.set(
+      id,
+      setTimeout(() => {
+        addToQueue({
+          id,
+          type: "update",
+          loadingMessage: "Updating quantity...",
+          successMessage: "Quantity updated",
+          errorMessage: function (err) {
+            return err.response?.data?.message || "Failed to update quantity";
+          },
+          operation: function () {
+            return axios.put(
+              `https://ecommerce.routemisr.com/api/v1/cart/${id}`,
+              { count: quantity },
+              headers
+            );
+          },
+          onError: function () {
+            if (!cart.data.products.find((p) => p.product.id === id)) return;
+            setCart((prev) => {
+              if (!prev) return prev;
 
-    updateTimeoutRef.current = setTimeout(() => {
-      const request = requestQueueRef.current.finally(() =>
-        axios
-          .put(
-            `https://ecommerce.routemisr.com/api/v1/cart/${id}`,
-            { count: quantity },
-            { headers }
-          )
-          .catch((err) => {
-            setCart((prevCart) => {
-              const index = prevCart?.data.products.findIndex(
-                (product) => product.product.id === id
+              const product = prev.data.products.find(
+                (p) => p.product.id === id
               );
-              if (index === -1) return prevCart;
+
+              if (!product) return prev;
 
               return {
-                ...prevCart,
+                ...prev,
                 data: {
-                  ...prevCart.data,
-                  totalItems:
-                    prevCart.data.totalItems - (quantity - oldQuantity),
-                  products: prevCart.data.products.map((product, i) =>
-                    index === i ? { ...product, count: oldQuantity } : product
+                  ...prev.data,
+                  products: prev.data.products.map((p) =>
+                    p.product.id === id ? { ...p, count: product.count } : p
                   ),
                 },
               };
             });
-            return Promise.reject(err);
-          })
-      );
-
-      requestQueueRef.current = request;
-
-      toast.promise(request, {
-        loading: "Updating quantity...",
-        success: "Quantity updated",
-        error: (err) =>
-          `Failed to update quantity: ${err.message || "Unknown error"}`,
-      });
-    }, 500);
+          },
+        });
+      }, 1000)
+    );
   }
 
   function clearCart() {
-    const request = requestQueueRef.current.finally(() =>
-      axios
-        .delete("https://ecommerce.routemisr.com/api/v1/cart", { headers })
-        .then(() => getCart())
-    );
-
-    requestQueueRef.current = request;
-
-    toast.promise(request, {
-      loading: "Clearing cart...",
-      success: "Cart cleared",
-      error: (err) =>
-        `Failed to clear the cart: ${err.message || "Unknown error"}`,
+    cartHandler({ data: { products: [], totalCartPrice: 0 } });
+    addToQueue({
+      type: "clear",
+      loadingMessage: "Clearing cart...",
+      successMessage: "Cart cleared",
+      errorMessage: function (err) {
+        return err.response?.data?.message || "Failed to clear cart";
+      },
+      operation: function () {
+        return axios.delete(
+          "https://ecommerce.routemisr.com/api/v1/cart",
+          headers
+        );
+      },
+      onSuccess: function () {
+        getCart();
+      },
     });
   }
 
   function getCart() {
+    if (queueRef.current.length > 1) return;
     return axios
-      .get("https://ecommerce.routemisr.com/api/v1/cart", { headers })
-      .then((res) => cartHandler(res.data))
-      .catch((err) => console.log(err));
+      .get("https://ecommerce.routemisr.com/api/v1/cart", headers)
+      .then(function (res) {
+        cartHandler(res.data);
+      })
+      .catch(function (err) {
+        console.error(err);
+      });
   }
+
   function cartHandler(data) {
     setCart((prevCart) => {
       const totalItems = data.data.products.reduce(
@@ -193,7 +277,6 @@ export default function CartContextProvider({ children }) {
             : item;
         });
       }
-
       return {
         ...data,
         data: {
@@ -218,7 +301,7 @@ export default function CartContextProvider({ children }) {
         updateQuantity,
         clearCart,
         cart,
-        pendingRequests,
+        pendingRequests: Array.from(pendingRequests),
       }}
     >
       {children}
