@@ -250,6 +250,7 @@ export default function CartContextProvider({ children }) {
   }
 
   function getCart() {
+    if (queueRef.current.length > 1) return;
     return axios
       .get("https://ecommerce.routemisr.com/api/v1/cart", headers)
       .then(function (res) {
