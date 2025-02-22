@@ -19,7 +19,7 @@ export default function ProductItem({ product }) {
         <img
           src={product.imageCover}
           className="w-full max-h-48 object-contain"
-          alt=""
+          alt={product.title}
         />
         {product.priceAfterDiscount && (
           <span className="-rotate-12 bg-red-600 px-2 py-1 group-hover:-translate-x-2 group-hover:-rotate-45 group-hover:-translate-y-5 transition-all duration-500 text-white rounded absolute top-3 left-1 font-semibold text-xs">

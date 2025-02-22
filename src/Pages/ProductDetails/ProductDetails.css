@@ -1,0 +1,10 @@
+.mySwiper {
+    @apply cursor-pointer
+}
+.swiper-pagination-bullet {
+  @apply opacity-50 w-2 h-2
+}
+
+.swiper-pagination-bullet-active {
+  @apply bg-green-600 opacity-100;
+}
