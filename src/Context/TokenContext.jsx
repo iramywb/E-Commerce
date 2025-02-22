@@ -15,10 +15,12 @@ export default function TokenContextProvider({ children }) {
           headers: { token },
         })
         .then(() => setIsAuth(true))
-        .catch(() => {
-            setIsAuth(false)
+        .catch((err) => {
+          setIsAuth(false);
+          if (err.code != "ERR_NETWORK") {
             localStorage.removeItem("token");
             setToken(null);
+          }
         });
     } else setIsAuth(false);
   }

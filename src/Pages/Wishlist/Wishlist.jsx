@@ -21,12 +21,12 @@ export default function Wishlist() {
         <table className="w-full text-sm text-center rtl:text-right text-gray-500 border border-green-600">
           <thead className="text-xs h-12 text-white uppercase bg-green-600">
             <tr>
-              <th scope="col" className="w-60">
+              <th scope="col" className="w-1/4">
                 <span className="sr-only">Image</span>
               </th>
-              <th scope="col">Product</th>
-              <th scope="col">Price</th>
-              <th scope="col">Delete</th>
+              <th scope="col" className="w-1/2">Product</th>
+              <th scope="col" className="w-[12.5%]">Price</th>
+              <th scope="col" className="w-[12.5%]">Delete</th>
             </tr>
           </thead>
           <tbody>

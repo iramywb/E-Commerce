@@ -6,14 +6,14 @@ import { CartContext } from "../../Context/CartContext";
 import { WishlistContext } from "../../Context/WishlistContext";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { MdAddShoppingCart, MdOutlineRemoveShoppingCart } from "react-icons/md";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export default function ProductItem({ product }) {
   const { addToCart, removeFromCart, cart, pendingRequests } =
     useContext(CartContext);
   const { addToWishlist, removeFromWishlist, wishlist } =
     useContext(WishlistContext);
-  return (
+
+  if (cart) return (
     <div className="product inner p-2 relative group">
       <Link to={`/product/${product.id}`}>
         <img
@@ -31,14 +31,14 @@ export default function ProductItem({ product }) {
         <h5 className="font-semibold line-clamp-1">{product.title}</h5>
         <div className="flex justify-between">
           {product.priceAfterDiscount ? (
-            <>
+            <div>
               <span className="font-bold">
                 {product.priceAfterDiscount} EGP
               </span>
-              <span className="line-through text-gray-400">
+              <span className="ms-2 line-through text-gray-400">
                 {product.price} EGP
               </span>
-            </>
+            </div>
           ) : (
             <span className="font-bold">{product.price} EGP</span>
           )}
@@ -49,27 +49,12 @@ export default function ProductItem({ product }) {
       </Link>
       <hr />
       <div className="flex justify-center gap-1 mt-2">
-        {wishlist.some((id) => id === product.id) ? (
-          <button
-            onClick={() => removeFromWishlist(product.id)}
-            className="btn text-red-600 bg-white border-gray-200 hover:bg-gray-50"
-          >
-            <FaHeart />
-          </button>
-        ) : (
-          <button
-            onClick={() => addToWishlist(product.id)}
-            className="btn text-gray-900 bg-white border-gray-200 hover:bg-gray-50 hover:text-red-600"
-          >
-            <FaRegHeart />
-          </button>
-        )}
-        {console.log(pendingRequests)}
-        {pendingRequests.has(product.id) ? (
-          <button className="btn hover:bg-gray-50 border-gray-200 w-1/2">
+        
+        {pendingRequests.includes(product.id) ? (
+          <button className="btn cursor-default bg-green-800 text-white border-gray-200 w-full">
             <svg
               aria-hidden="true"
-              className="inline w-[18px] h-[18px] text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300"
+              className="inline w-[18px] h-[18px] text-white animate-spin fill-gray-700"
               viewBox="0 0 100 101"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -88,17 +73,32 @@ export default function ProductItem({ product }) {
             (item) => item.product.id === product.id
           ) ? (
           <button
-            className="btn hover:bg-gray-50 border-gray-200 w-1/2"
+            className="btn bg-green-600 hover:bg-green-700 text-white border-gray-200 w-full"
             onClick={() => removeFromCart(product.id)}
           >
             <MdOutlineRemoveShoppingCart className="text-lg" />
           </button>
         ) : (
           <button
-            className="btn hover:bg-gray-50 border-gray-200 w-1/2"
+            className="btn bg-green-600 hover:bg-green-700 text-white border-gray-200 w-full"
             onClick={() => addToCart(product.id)}
           >
             <MdAddShoppingCart className="text-lg" />
+          </button>
+        )}
+        {wishlist.some((id) => id === product.id) ? (
+          <button
+            onClick={() => removeFromWishlist(product.id)}
+            className="btn text-red-600 bg-white border-gray-200 hover:bg-gray-50"
+          >
+            <FaHeart />
+          </button>
+        ) : (
+          <button
+            onClick={() => addToWishlist(product.id)}
+            className="btn text-gray-900 bg-white border-gray-200 hover:bg-gray-50 hover:text-red-600"
+          >
+            <FaRegHeart />
           </button>
         )}
       </div>

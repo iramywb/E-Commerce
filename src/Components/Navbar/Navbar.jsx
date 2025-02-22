@@ -30,7 +30,6 @@ export default function Navbar() {
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <img src={logo} className="h-8" alt="FreshMarket Logo" />
-            {/* <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">FreshMarket</span> */}
           </Link>
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -49,7 +48,6 @@ export default function Navbar() {
               viewBox="0 0 17 14"
             >
               {isOpen ? (
-                // Cross icon (X)
                 <path
                   stroke="currentColor"
                   strokeLinecap="round"
@@ -58,7 +56,6 @@ export default function Navbar() {
                   d="M1 1l15 12M1 13l15-12"
                 />
               ) : (
-                // Hamburger menu icon (three lines)
                 <path
                   stroke="currentColor"
                   strokeLinecap="round"
@@ -70,7 +67,6 @@ export default function Navbar() {
             </svg>
           </button>
         </div>
-        {/* class to make it in flex be at the center */}
         <div
           className={`${
             isOpen ? "max-h-96" : "max-h-0 delay-100"
@@ -86,14 +82,6 @@ export default function Navbar() {
                   aria-current="page"
                 >
                   Home
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to={"/cart"}
-                  className="block text-center py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                >
-                  Cart
                 </NavLink>
               </li>
               <li>

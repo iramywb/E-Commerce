@@ -16,7 +16,8 @@ import { FaStarHalfStroke } from "react-icons/fa6";
 
 export default function ProductDetails() {
   const { id } = useParams();
-  const { addToCart, removeFromCart, cart, pendingRequests } = useContext(CartContext);
+  const { addToCart, removeFromCart, cart, pendingRequests } =
+    useContext(CartContext);
   const { addToWishlist, removeFromWishlist, wishlist } =
     useContext(WishlistContext);
 
@@ -31,7 +32,7 @@ export default function ProductDetails() {
   useEffect(() => {
     getProduct();
   }, [id]);
-  if (product)
+  if (product && cart)
     if (typeof product === "number")
       return (
         <div className="flex flex-col gap-3 justify-center items-center">
@@ -118,12 +119,12 @@ export default function ProductDetails() {
                     </span>
                   </p>
                 )}
-                <div className="mt-6 gap-4 items-center flex sm:mt-8">
-                  {pendingRequests.has(product.id) ? (
-                    <button className="btn hover:bg-gray-50 border-gray-200 w-1/4">
+                <div className="mt-6 gap-4 items-center flex md:max-w-80 sm:mt-8">
+                  {pendingRequests.includes(product.id) ? (
+                    <button className="btn cursor-default bg-green-800 text-white border-gray-200 w-full">
                       <svg
                         aria-hidden="true"
-                        className="inline w-[14px] h-[14px] text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300"
+                        className="inline w-[18px] h-[18px] text-white animate-spin fill-gray-700"
                         viewBox="0 0 100 101"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -142,14 +143,14 @@ export default function ProductDetails() {
                       (item) => item.product.id === product.id
                     ) ? (
                     <button
-                      className="btn p-2 hover:bg-gray-50 border-gray-200 w-1/4"
+                      className="btn bg-green-600 hover:bg-green-700 text-white border-gray-200 w-full"
                       onClick={() => removeFromCart(product.id)}
                     >
                       <MdOutlineRemoveShoppingCart className="text-lg" />
                     </button>
                   ) : (
                     <button
-                      className="btn p-2 hover:bg-gray-50 border-gray-200 w-1/4"
+                      className="btn bg-green-600 hover:bg-green-700 text-white border-gray-200 w-full"
                       onClick={() => addToCart(product.id)}
                     >
                       <MdAddShoppingCart className="text-lg" />

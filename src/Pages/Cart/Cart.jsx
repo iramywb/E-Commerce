@@ -27,7 +27,7 @@ export default function Cart() {
         <div className="grid md:grid-cols-3 gap-4 mt-8">
           <div className="md:col-span-2 space-y-4">
             {cart ? (
-              cart.numOfCartItems > 0 ? (
+              cart.data.products.length > 0 ? (
                 cart.data.products.map((product) => (
                   <div
                     className="flex gap-4 bg-white px-4 py-6 rounded-md shadow-[0_2px_12px_-3px_rgba(61,63,68,0.3)]"
