@@ -84,7 +84,7 @@ export default function CartContextProvider({ children }) {
         ],
       },
     }));
-    console.log(cart)
+
     addToQueue({
       id,
       type: "add",
@@ -94,11 +94,13 @@ export default function CartContextProvider({ children }) {
         return err.response?.data?.message || "Failed to add to cart";
       },
       operation: function () {
-        return axios.post(
-          "https://ecommerce.routemisr.com/api/v1/cart/",
-          { productId: id },
-          headers
-        ).then(() => getCart());
+        return axios
+          .post(
+            "https://ecommerce.routemisr.com/api/v1/cart/",
+            { productId: id },
+            headers
+          )
+          .then(() => getCart());
       },
       onError: () => setCart(originalCart),
     });
@@ -247,7 +249,7 @@ export default function CartContextProvider({ children }) {
   }
 
   function getCart() {
-    if (queueRef.current.length > 1) return;
+    if (queueRef.current.filter((p) => p.type === "add").length > 1) return;
     return axios
       .get("https://ecommerce.routemisr.com/api/v1/cart", headers)
       .then(function (res) {
