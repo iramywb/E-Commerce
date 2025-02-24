@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { FaHeart, FaHome, FaRegHeart, FaRegStar, FaStar } from "react-icons/fa";
+import { FaHeart, FaHome, FaRegHeart } from "react-icons/fa";
 import { CartContext } from "../../Context/CartContext";
 import Loader from "../../Components/Loader/Loader";
 import "swiper/css";
@@ -12,7 +12,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import { WishlistContext } from "../../Context/WishlistContext";
 import { MdAddShoppingCart, MdOutlineRemoveShoppingCart } from "react-icons/md";
-import { FaStarHalfStroke } from "react-icons/fa6";
 import Rating5Stars from "../../Components/Rating5Stars/Rating5Stars";
 
 export default function ProductDetails() {
