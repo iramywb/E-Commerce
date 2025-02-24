@@ -58,6 +58,9 @@ export default function Login() {
       <div className="min-h-screen flex flex-col items-center justify-center py-6 px-4">
         <div className="max-w-md w-full">
           <div className="p-8 rounded-2xl bg-white shadow">
+            {error && (
+              <div className="bg-red-500 text-white p-2 rounded">{error}</div>
+            )}
             <img
               src={logo}
               alt="FreshCart"
