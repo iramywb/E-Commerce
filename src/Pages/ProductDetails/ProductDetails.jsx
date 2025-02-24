@@ -13,6 +13,7 @@ import { Autoplay, Pagination } from "swiper/modules";
 import { WishlistContext } from "../../Context/WishlistContext";
 import { MdAddShoppingCart, MdOutlineRemoveShoppingCart } from "react-icons/md";
 import { FaStarHalfStroke } from "react-icons/fa6";
+import Rating5Stars from "../../Components/Rating5Stars/Rating5Stars";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -35,16 +36,18 @@ export default function ProductDetails() {
   if (product && cart)
     if (typeof product === "number")
       return (
-        <div className="flex flex-col gap-3 justify-center items-center">
-          <p className="m-auto">Item Not Found</p>
-          <Link className="btn" to={"/"}>
-            Go to home page <FaHome className="inline" />
-          </Link>
-        </div>
+        <section className="container py-8">
+          <div className="flex flex-col gap-3 justify-center items-center">
+            <p className="m-auto">Item Not Found</p>
+            <Link className="btn" to={"/"}>
+              Go to home page <FaHome className="inline" />
+            </Link>
+          </div>
+        </section>
       );
     else
       return (
-        <section className="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
+        <section className="container py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
           <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0">
             <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-8 xl:gap-16">
               <div>
@@ -67,7 +70,7 @@ export default function ProductDetails() {
                     <SwiperSlide key={i}>
                       <img
                         src={image}
-                        className="w-full h-96 object-contain object-center"
+                        className="w-full h-80 object-contain object-center"
                         alt=""
                       />
                     </SwiperSlide>
@@ -87,16 +90,7 @@ export default function ProductDetails() {
                   </p>
                   <div className="flex items-center gap-2 mt-2 sm:mt-0">
                     <div className="flex items-center gap-1 text-yellow-300">
-                      {
-                        // loop 5 times to render 5 stars with half star if rating is above 0.5
-                        Array.from({ length: 5 }).map((_, i) => {
-                          if (i + 1 <= product.ratingsAverage) {
-                            return <FaStar key={i} />;
-                          } else if (i + 0.5 < product.ratingsAverage) {
-                            return <FaStarHalfStroke key={i} />;
-                          } else return <FaRegStar key={i} />;
-                        })
-                      }
+                      <Rating5Stars rate={product.ratingsAverage} />
                     </div>
                     <p className="text-sm font-medium leading-none text-gray-500 dark:text-gray-400">
                       ({product.ratingsAverage})

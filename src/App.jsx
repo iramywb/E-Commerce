@@ -20,6 +20,7 @@ import CartContextProvider from "./Context/CartContext";
 import WishlistContextProvider from "./Context/WishlistContext";
 import { DetectOffline } from "react-detect-offline";
 import Wishlist from "./Pages/Wishlist/Wishlist";
+import ForgotPassword from "./Pages/ForgotPassword/ForgotPassword";
 
 export default function App() {
   const routes = createBrowserRouter([
@@ -75,9 +76,38 @@ export default function App() {
             </ProtectedRoutes>
           ),
         },
-        { path: "login", element: <Login /> },
-        { path: "register", element: <Register /> },
-        { path: "*", element: <NotFound /> },
+        {
+          path: "login",
+          element: (
+            <ProtectedRoutes>
+              <Login />
+            </ProtectedRoutes>
+          ),
+        },
+        {
+          path: "register",
+          element: (
+            <ProtectedRoutes>
+              <Register />
+            </ProtectedRoutes>
+          ),
+        },
+        {
+          path: "forgotPassword",
+          element: (
+            <ProtectedRoutes>
+              <ForgotPassword />
+            </ProtectedRoutes>
+          ),
+        },
+        {
+          path: "*",
+          element: (
+            <ProtectedRoutes>
+              <NotFound />
+            </ProtectedRoutes>
+          ),
+        },
       ],
     },
   ]);

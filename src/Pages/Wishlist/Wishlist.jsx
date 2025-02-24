@@ -1,18 +1,19 @@
 import { useContext, useEffect } from "react";
 import { WishlistContext } from "../../Context/WishlistContext";
-import { FaRegHeart, FaRegTrashAlt } from "react-icons/fa";
+import { FaRegTrashAlt } from "react-icons/fa";
 import { IoHeartOutline } from "react-icons/io5";
 
 export default function Wishlist() {
   const { wishlistItems, getWishlist, removeFromWishlist, wishlist, clearWishlist } =
     useContext(WishlistContext);
 
-  useEffect((effect) => {
-    getWishlist();
-  }, []);
+  useEffect(() => {
+    console.log(wishlist.length, wishlistItems.length);
+    if (wishlist.length !== wishlistItems.length) getWishlist();
+  }, [wishlist]);
 
   return (
-    <section>
+    <section className="container py-8">
       <div className="flex items-center gap-4 justify-center flex-col font-bold font-sans text-4xl mb-16">
         <IoHeartOutline className="text-8xl" />
         <h1>My Wishlist</h1>

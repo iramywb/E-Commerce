@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { Suspense, useContext } from "react";
 import Loader from "../../Components/Loader/Loader";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
 import { FaHeart, FaRegHeart, FaRegTrashAlt } from "react-icons/fa";
@@ -9,7 +9,8 @@ import { WishlistContext } from "../../Context/WishlistContext";
 export default function Cart() {
   const { removeFromCart, updateQuantity, clearCart, cart } =
     useContext(CartContext);
-  const { wishlist, addToWishlist, removeFromWishlist } = useContext(WishlistContext);
+  const { wishlist, addToWishlist, removeFromWishlist } =
+    useContext(WishlistContext);
 
   if (cart)
     return (
@@ -35,10 +36,12 @@ export default function Cart() {
                   >
                     <div className="flex gap-4">
                       <div className="w-28 h-28 max-sm:w-24 max-sm:h-24 shrink-0">
-                        <img
-                          src={product.product.imageCover}
-                          className="w-full h-full object-contain"
-                        />
+                        <Suspense fallback={<span>LOADING...</span>}>
+                          <img
+                            src={product.product.imageCover}
+                            className="w-full h-full object-contain"
+                          />
+                        </Suspense>
                       </div>
                       <div className="flex flex-col gap-4">
                         <div>
@@ -77,7 +80,7 @@ export default function Cart() {
                             disabled={product.count >= product.product.quantity}
                             type="button"
                             className="flex items-center justify-center w-5 h-5 bg-gray-800 disabled:bg-gray-400 outline-none rounded-full text-white"
-                            >
+                          >
                             <IoMdAdd />
                           </button>
                         </div>
@@ -86,7 +89,12 @@ export default function Cart() {
                     <div className="ml-auto flex flex-col">
                       <div className="flex items-start gap-4 justify-end text-lg">
                         {wishlist.some((id) => id === product.product.id) ? (
-                          <FaHeart onClick={() => removeFromWishlist(product.product.id)} className="text-red-600 cursor-pointer text-lg" />
+                          <FaHeart
+                            onClick={() =>
+                              removeFromWishlist(product.product.id)
+                            }
+                            className="text-red-600 cursor-pointer text-lg"
+                          />
                         ) : (
                           <FaRegHeart
                             onClick={() => addToWishlist(product.product.id)}

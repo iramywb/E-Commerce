@@ -1,14 +1,13 @@
 import CategorySlider from "../../Components/CategorySlider/CategorySlider";
-import LatestProducts from "../../Components/LatestProducts/LatestProducts";
 import MainSlider from "../../Components/MainSlider/MainSlider";
-import style from "./Home.module.css";
+import LatestProducts from "../../Components/LatestProducts/LatestProducts";
 
 export default function Home() {
   return (
-    <div>
-      <MainSlider />
+    <section className="container py-8">
+      <MainSlider className="min-h-svh" />
       <CategorySlider />
       <LatestProducts />
-    </div>
+    </section>
   );
 }

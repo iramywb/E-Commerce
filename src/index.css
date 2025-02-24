@@ -8,12 +8,11 @@
   color: rgb(5 122 85 / var(--tw-text-opacity, 1)) !important;
 }
 @layer components {
+  ::selection {
+    @apply bg-green-600/50 text-white
+  }
   body {
     font-family: "Encode Sans Expanded", sans-serif !important;
-  }
-  .active {
-    font-weight: 800 !important;
-    color: rgb(5 122 85 / var(--tw-text-opacity, 1)) !important;
   }
   .row {
     @apply flex flex-wrap;
