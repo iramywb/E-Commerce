@@ -16,6 +16,7 @@ export default function CartContextProvider({ children }) {
   const isProcessingRef = useRef(false);
   // Debounce
   const updateTimeoutsRef = useRef(new Map());
+  const quantitiesBackup = useRef(new Map());
   // Headers
   const headers = { headers: { token } };
 
@@ -136,10 +137,9 @@ export default function CartContextProvider({ children }) {
         return err.response?.data?.message || "Failed to remove from cart";
       },
       operation: function () {
-        return axios.delete(
-          `https://ecommerce.routemisr.com/api/v1/cart/${id}`,
-          headers
-        ).then(() => getCart());
+        return axios
+          .delete(`https://ecommerce.routemisr.com/api/v1/cart/${id}`, headers)
+          .then(() => getCart());
       },
       onError: () => setCart(originalCart),
     });
@@ -150,6 +150,20 @@ export default function CartContextProvider({ children }) {
       clearTimeout(updateTimeoutsRef.current.get(id));
     }
 
+
+    if (!quantitiesBackup.current.has(id)) {
+      console.log("Adding the id to backup...");
+      quantitiesBackup.current.set(
+        id,
+        cart.data.products.find((p) => p.product.id === id).count
+      );
+      console.log("Added");
+    } else {
+      console.log(
+        "the quantity is not updated yet original quantity is: " +
+          quantitiesBackup.current.get(id)
+      );
+    }
     setCart((prev) => {
       if (!prev) return prev;
 
@@ -163,10 +177,7 @@ export default function CartContextProvider({ children }) {
       const pricePerItem = oldProduct.price;
       const quantityDifference = quantity - oldProduct.count;
 
-      const totalItems = prev.data.products.reduce(
-        (acc, item) => acc + item.count,
-        0
-      );
+      const totalItems = prev.data.totalItems
 
       return {
         ...prev,
@@ -185,6 +196,7 @@ export default function CartContextProvider({ children }) {
     updateTimeoutsRef.current.set(
       id,
       setTimeout(() => {
+        updateTimeoutsRef.current.delete(id);
         addToQueue({
           id,
           type: "update",
@@ -200,30 +212,41 @@ export default function CartContextProvider({ children }) {
               headers
             );
           },
+          onSuccess: function () {
+            if (updateTimeoutsRef.current.has(id))
+              quantitiesBackup.current.set(id, quantity);
+            else quantitiesBackup.current.delete(id);
+          },
           onError: function () {
             if (!cart.data.products.find((p) => p.product.id === id)) return;
             setCart((prev) => {
-              if (!prev) return prev;
-
-              const product = prev.data.products.find(
+              const productIndex = prev.data.products.findIndex(
                 (p) => p.product.id === id
               );
-
-              if (!product) return prev;
-
-              return {
+              if (productIndex === -1) return prev;
+              const currentProduct = prev.data.products[productIndex];
+              const totalItems = prev.data.totalItems
+              const quantityDifference = quantity - quantitiesBackup.current.get(id);
+              const pricePerItem = currentProduct.price;
+              const revertedCart = {
                 ...prev,
                 data: {
                   ...prev.data,
+                  totalItems: totalItems - quantityDifference,
+                  totalCartPrice:
+                    prev.data.totalCartPrice - quantityDifference * pricePerItem,
                   products: prev.data.products.map((p) =>
-                    p.product.id === id ? { ...p, count: product.count } : p
+                    p.product.id === id ? { ...p, count: currentProduct.count - quantityDifference } : p
                   ),
                 },
               };
+
+              return revertedCart
             });
+            quantitiesBackup.current.delete(id);
           },
         });
-      }, 1000)
+      }, 500)
     );
   }
 
@@ -249,14 +272,18 @@ export default function CartContextProvider({ children }) {
   }
 
   function getCart() {
-    if (queueRef.current.length > 1) return;
+    if (
+      queueRef.current.filter((q) => q.type === "add" || q.type === "remove")
+        .length > 1
+    )
+      return;
     return axios
       .get("https://ecommerce.routemisr.com/api/v1/cart", headers)
       .then(function (res) {
         cartHandler(res.data);
       })
-      .catch(function (err) {
-        console.error(err);
+      .catch(function () {
+        getCart()
       });
   }
 
