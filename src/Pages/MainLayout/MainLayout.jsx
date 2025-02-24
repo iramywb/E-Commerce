@@ -7,7 +7,7 @@ export default function MainLayout() {
   return (
     <div className='flex flex-col min-h-screen'>
       <Navbar />
-      <main className="container flex-grow py-8">
+      <main className="flex-grow mt-[70px]">
         <Outlet />
       </main>
       <Footer />
