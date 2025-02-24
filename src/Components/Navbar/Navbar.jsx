@@ -102,7 +102,7 @@ export default function Navbar() {
               </Link>
             </li>
             {links.map((link, index) => (
-              <li key={index} className="max-lg:border-b max-lg:py-3 px-3">
+              <li key={index} className="max-lg:border-b px-3">
                 <NavLink
                   to={link.path}
                   className="hover:text-green-600 text-[#333] block font-semibold text-[15px]"
