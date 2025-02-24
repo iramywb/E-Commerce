@@ -96,7 +96,6 @@ export default function TokenContextProvider({ children }) {
     setFMail({ email: null, verified: false });
     setFError(null);
     setSeconds(null);
-    console.log("cleaned");
   }
   function formatSeconds() {
     const minutes = Math.floor(seconds / 60);

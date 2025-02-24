@@ -44,7 +44,7 @@ export default function CategorySlider() {
     await axios
       .get("https://ecommerce.routemisr.com/api/v1/categories")
       .then((res) => setCategories(res.data.data))
-      .catch((err) => console.log(err));
+      .catch((err) => err);
   }
   useEffect(() => {
     getCategories();
