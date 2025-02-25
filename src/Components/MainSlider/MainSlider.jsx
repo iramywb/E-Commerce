@@ -16,7 +16,7 @@ export default function MainSlider() {
     autoplaySpeed: 5000,
   };
   return (
-    <div className="row mb-16">
+    <div className="flex mb-16">
       <div className="w-2/3">
         <Slider {...settings} className="h-full w-full">
           <img src={img1} className="h-[500px] w-full" alt="" />

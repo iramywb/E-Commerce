@@ -1,4 +1,3 @@
-import { FaStar } from "react-icons/fa6";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
@@ -8,6 +7,7 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { MdAddShoppingCart, MdOutlineRemoveShoppingCart } from "react-icons/md";
 import LazyLoad from "react-lazyload";
 import Rating5Stars from "../Rating5Stars/Rating5Stars";
+import { RiLoader4Fill } from "react-icons/ri";
 
 export default function ProductItem({ product }) {
   const { addToCart, removeFromCart, cart, pendingRequests } =
@@ -15,6 +15,10 @@ export default function ProductItem({ product }) {
   const { addToWishlist, removeFromWishlist, wishlist } =
     useContext(WishlistContext);
 
+  const isPending = pendingRequests.includes(product.id);
+  const isInCart = cart?.data.products.some(
+    (item) => item.product.id === product.id
+  );
   if (cart)
     return (
       <div className="product inner p-2 relative group">
@@ -63,22 +67,44 @@ export default function ProductItem({ product }) {
         </Link>
         <hr />
         <div className="flex justify-center gap-1 mt-2">
-          {pendingRequests.includes(product.id) ? (
-            <button className="btn cursor-default bg-green-800 text-white border-gray-200 w-full">
+          <button
+            className={`btn w-full border-gray-200 transition duration-300 ${
+              isPending
+                ? "cursor-default " +
+                  (isInCart
+                    ? "bg-gray-900 text-white"
+                    : "bg-gray-100 text-black")
+                : isInCart
+                ? "bg-white hover:bg-gray-100 text-black"
+                : "bg-gray-800 hover:bg-gray-900 text-white"
+            }`}
+            disabled={isPending}
+            onClick={() =>
+              isInCart ? removeFromCart(product.id) : addToCart(product.id)
+            }
+          >
+            <span>
+              {isPending ? (
+                <RiLoader4Fill className="text-lg animate-spin" />
+              ) : isInCart ? (
+                <MdOutlineRemoveShoppingCart className="text-lg" />
+              ) : (
+                <MdAddShoppingCart className="text-lg" />
+              )}
+            </span>
+          </button>
+          {/* {pendingRequests.includes(product.id) ? (
+            <button className="btn cursor-default bg-gray-400 text-white border-gray-200 w-full">
               <svg
-                aria-hidden="true"
-                className="inline w-[18px] h-[18px] text-white animate-spin fill-gray-700"
-                viewBox="0 0 100 101"
-                fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                width="18px"
+                fill="#fff"
+                className="ml-2 inline animate-spin"
+                viewBox="0 0 24 24"
               >
                 <path
-                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                  fill="currentColor"
-                />
-                <path
-                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                  fill="currentFill"
+                  d="M12 22c5.421 0 10-4.579 10-10h-2c0 4.337-3.663 8-8 8s-8-3.663-8-8c0-4.336 3.663-8 8-8V2C6.579 2 2 6.58 2 12c0 5.421 4.579 10 10 10z"
+                  data-original="#000000"
                 />
               </svg>
             </button>
@@ -86,7 +112,7 @@ export default function ProductItem({ product }) {
               (item) => item.product.id === product.id
             ) ? (
             <button
-              className="btn bg-green-600 hover:bg-green-700 text-white border-gray-200 w-full"
+              className="btn bg-white-600 hover:bg-gray-100 text-black border-gray-200 w-full"
               onClick={() => removeFromCart(product.id)}
             >
               <MdOutlineRemoveShoppingCart className="text-lg" />
@@ -98,7 +124,7 @@ export default function ProductItem({ product }) {
             >
               <MdAddShoppingCart className="text-lg" />
             </button>
-          )}
+          )} */}
           {wishlist.some((id) => id === product.id) ? (
             <button
               onClick={() => removeFromWishlist(product.id)}

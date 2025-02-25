@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./Navbar.css";
 import { FaRegHeart } from "react-icons/fa";
 import { Link, NavLink } from "react-router-dom";
@@ -9,11 +9,15 @@ import { CartContext } from "../../Context/CartContext";
 import { HiOutlineShoppingBag } from "react-icons/hi";
 import { WishlistContext } from "../../Context/WishlistContext";
 import { CgProfile } from "react-icons/cg";
+import { NavActionsContext } from "../../Context/NavActionsContext";
+import { GoSearch } from "react-icons/go";
 
 export default function Navbar() {
   const { token, setToken } = useContext(TokenContext);
   const { cart } = useContext(CartContext);
   const { wishlist } = useContext(WishlistContext);
+  const { handleSearch, shouldShowSearch, search } =
+    useContext(NavActionsContext);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -42,12 +46,11 @@ export default function Navbar() {
   }
 
   return (
-
     <nav className="flex shadow-lg py-4 px-4 sm:px-10 bg-white font-[sans-serif] min-h-[70px] tracking-wide fixed w-full z-50">
-      <div className="flex flex-wrap items-center justify-between gap-4 w-full">
+      <div className="flex items-center justify-between gap-4 w-full">
         <Link
           to={"/"}
-          className="lg:absolute max-lg:left-10 lg:top-2/4 lg:left-2/4 lg:-translate-x-1/2 lg:-translate-y-1/2 max-sm:hidden"
+          className="lg:absolute shrink-0 max-lg:left-10 lg:top-2/4 lg:left-2/4 lg:-translate-x-1/2 lg:-translate-y-1/2 max-sm:hidden"
         >
           <img
             src={logo1}
@@ -102,7 +105,7 @@ export default function Navbar() {
               </Link>
             </li>
             {links.map((link, index) => (
-              <li key={index} className="max-lg:border-b px-3">
+              <li key={index} className="max-lg:border-b max-lg:py-3 px-3">
                 <NavLink
                   to={link.path}
                   className="hover:text-green-600 text-[#333] block font-semibold text-[15px]"
@@ -113,8 +116,24 @@ export default function Navbar() {
             ))}
           </ul>
         </div>
-        <div className="flex items-center space-x-6"> 
-          <div className="group max-lg:py-3 relative">
+        <div className="flex items-center space-x-6">
+          {shouldShowSearch && (
+            <div className="hidden md:flex gap-4 ml-auto">
+              <div className="flex max-w-xs bg-gray-100 rounded outline outline-transparent border focus-within:border-green-600 focus-within:bg-transparent transition-all">
+                <input
+                  type="text"
+                  onChange={handleSearch}
+                  value={search}
+                  placeholder="Search something..."
+                  className="w-full text-sm bg-transparent rounded outline-none px-2 border-none focus:!ring-0"
+                />
+                <div className="flex-shrink-0 h-full w-auto flex items-center justify-center">
+                  <GoSearch className="text-gray-400 h-full w-auto p-2" />
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="group relative">
             <div className="hover:text-green-600 text-gray-600 text-[15px] font-bold lg:hover:fill-green-600 block cursor-pointer">
               <CgProfile className="text-2xl" />
             </div>
@@ -162,7 +181,6 @@ export default function Navbar() {
               )}
             </ul>
           </div>
-
           <Link
             to="/wishlist"
             className="relative hover:text-green-600 cursor-pointer"

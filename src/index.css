@@ -9,27 +9,24 @@
 }
 @layer components {
   ::selection {
-    @apply bg-green-600/50 text-white
+    @apply bg-green-600/50 text-white;
   }
   body {
     font-family: "Encode Sans Expanded", sans-serif !important;
   }
-  .row {
+  /* .row {
     @apply flex flex-wrap;
-  }
+  } */
   /* .btn {
         @apply w-full select-none cursor-pointer text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none;
     } */
   .btn {
-    @apply flex items-center justify-center gap-2 rounded-lg border focus:outline-none p-2.5 text-sm font-semibold;
+    @apply flex items-center justify-center gap-2 rounded-lg border p-2.5 font-semibold;
   }
   .inner {
     @apply p-2;
   }
   .product {
     @apply border border-transparent border-gray-100 hover:border-gray-400 transition duration-300 ease-in-out;
-  }
-  .product:hover .btn {
-    @apply translate-y-0 opacity-100;
   }
 }
