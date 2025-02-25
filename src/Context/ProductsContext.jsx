@@ -4,19 +4,14 @@ import { createContext, useEffect, useState } from "react";
 export const ProductsContext = createContext();
 
 export default function ProductsContextProvider({ children }) {
-  const [products, setProducts] = useState([]);
 
-  async function getProducts() {
-    await axios
+  function getProducts() {
+    return axios
       .get("https://ecommerce.routemisr.com/api/v1/products")
-      .then((res) => setProducts(res.data.data));
   }
 
-  useEffect(() => {
-    getProducts();
-  }, []);
   return (
-    <ProductsContext.Provider value={{products, setProducts}}>
+    <ProductsContext.Provider value={{getProducts}}>
       {children}
     </ProductsContext.Provider>
   );

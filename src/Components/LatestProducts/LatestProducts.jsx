@@ -5,8 +5,13 @@ import Loader from "../Loader/Loader";
 import { ProductsContext } from "../../Context/ProductsContext";
 
 export default function LatestProducts() {
-
-  const { products } = useContext(ProductsContext);
+  const { getProducts } = useContext(ProductsContext);
+  
+  const [products, setProducts] = useState([]);
+  
+  useEffect(() => {
+    getProducts().then((res) => setProducts(res.data.data));
+  }, []);
 
   return (
     <div className="flex flex-wrap justify-around">

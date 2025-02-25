@@ -1,13 +1,19 @@
-import { useContext, useEffect } from "react";
-import style from "./Products.module.css";
+import { useContext, useEffect, useState } from "react";
 import { NavActionsContext } from "../../Context/NavActionsContext";
 import { GoSearch } from "react-icons/go";
 import { ProductsContext } from "../../Context/ProductsContext";
 import ProductItem from "../../Components/ProductItem/ProductItem";
+import Loader from "../../Components/Loader/Loader";
 
 export default function Products() {
   const { displaySearch, search, handleSearch } = useContext(NavActionsContext);
-  const { products } = useContext(ProductsContext);
+  const { getProducts } = useContext(ProductsContext);
+
+  const [products, setProducts] = useState([]);
+    
+    useEffect(() => {
+      getProducts().then((res) => setProducts(res.data.data));
+    }, []);
 
   useEffect(() => {
     const cleanup = displaySearch();
@@ -30,7 +36,8 @@ export default function Products() {
         </div>
       </div>
       <div className="flex flex-wrap">
-        {products.map(
+        {products.length > 0 ?
+        products.map(
           (product) =>
             product.title.toLowerCase().includes(search.toLowerCase()) && (
               <div
@@ -40,7 +47,10 @@ export default function Products() {
                 <ProductItem product={product} key={product.id} />
               </div>
             )
-        )}
+        ) : (
+          <Loader />
+        )
+        }
       </div>
     </section>
   );
