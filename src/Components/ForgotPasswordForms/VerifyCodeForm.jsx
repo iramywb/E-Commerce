@@ -2,20 +2,37 @@ import { useFormik } from "formik";
 import { FaLock } from "react-icons/fa";
 import { FiCheckCircle, FiClock } from "react-icons/fi";
 import * as Yup from "yup";
-import { TokenContext } from "../../Context/TokenContext";
-import { useContext, useEffect } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { Link } from "react-router-dom";
-export default function VerifyCodeForm() {
-  const {
-    fError,
-    fMail,
-    formatSeconds,
-    handleForgotPassword,
-    handleVerifyCode,
-    clearFError,
-  } = useContext(TokenContext);
+import axios from "axios";
+import PropTypes from "prop-types";
+
+export default function VerifyCodeForm({ tools }) {
+  const { formMail, setFormMail } = tools;
+  // const {
+  //   fError,
+  //   fMail,
+  //   formatSeconds, 1
+  //   handleForgotPassword,
+  //   handleVerifyCode, 1
+  //   clearFError,
+  // } = useContext(TokenContext);
+
+  const [seconds, setSeconds] = useState(10 * 60);
+  const [error, setError] = useState(null);
+
+  function formatSeconds() {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+
+    const parts = [];
+    parts.push(`${minutes < 10 ? "0" : ""}${minutes}:`);
+    parts.push(`${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`);
+
+    return parts.join("");
+  }
   const validationSchema = Yup.object({
     resetCode: Yup.string()
       .trim()
@@ -23,22 +40,66 @@ export default function VerifyCodeForm() {
       .matches(/^\d+$/, "Reset code must be a number"),
   });
   function resendCode() {
-    toast.promise(handleForgotPassword({ email: fMail.email }), {
-      loading: "Sending code ...",
-      success: "Code sent successfully",
-      error: "Failed to send the code",
-    });
+    const request = () =>
+      axios.post(
+        "https://ecommerce.routemisr.com/api/v1/auth/forgotPasswords",
+        {
+          email: formMail.email,
+        }
+      );
+
+    toast
+      .promise(request(), {
+        loading: "Sending code ...",
+        success: (res) => res.data?.message || "Code sent successfully",
+        error: (err) =>
+          err.response?.data?.message ||
+          err.message ||
+          "Failed to send the code",
+      })
+      .then(() => setSeconds(10 * 60));
   }
   const formik = useFormik({
     initialValues: {
       resetCode: "",
     },
     validationSchema,
-    onSubmit: handleVerifyCode,
+    onSubmit: (values) =>
+      handleVerifyCode(values).catch((err) =>
+        setError(err.response.data.message)
+      ),
   });
   useEffect(() => {
-    if (fError) clearFError();
-  }, [formik.values.resetCode]);
+    const id = setInterval(() => {
+      setSeconds((prev) => {
+        if (prev > 0) return prev - 1;
+        else {
+          setSeconds(null);
+          setFormMail((prev) =>
+            prev.verified ? prev : { ...prev, email: null }
+          );
+          clearInterval(id);
+        }
+      });
+    }, 1000); // interval
+    return () => clearInterval(id);
+  }, [seconds]);
+
+  async function handleVerifyCode(values) {
+    const res = await axios.post(
+      "https://ecommerce.routemisr.com/api/v1/auth/verifyResetCode",
+      {
+        resetCode: values.resetCode.trim(),
+      }
+    );
+    // .catch((err) => setFError(err.response.data.message));
+    if (res.data?.status === "Success") {
+      setFormMail((prev) => ({ ...prev, verified: true }));
+      // setSeconds(null);
+    }
+    return res;
+  }
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="space-y-6">
@@ -64,13 +125,14 @@ export default function VerifyCodeForm() {
               </ol>
               <div className="mt-4 text-sm">
                 {`Can't find it? `}
-                <Link
+                <span
                   type="button"
                   onClick={resendCode}
-                  className="text-green-600 hover:text-green-400 font-medium"
+                  className="text-green-600 hover:text-green-400 font-medium cursor-pointer"
                 >
                   Resend Code
-                </Link>{" or contact "}
+                </span>
+                {" or contact "}
                 <Link
                   to="mailto:support@yourdomain.com"
                   className="text-green-600 hover:text-green-400 font-medium"
@@ -80,10 +142,11 @@ export default function VerifyCodeForm() {
               </div>
             </div>
           </div>
-        <hr />
-        <div className="mt-4 text-sm text-center">
-          Code expires in: <span className="font-bold">{formatSeconds()}</span>
-        </div>
+          <hr />
+          <div className="mt-4 text-sm text-center">
+            Code expires in:{" "}
+            <span className="font-bold">{formatSeconds()}</span>
+          </div>
         </div>
         <div>
           <label
@@ -103,11 +166,10 @@ export default function VerifyCodeForm() {
             onBlur={formik.handleBlur}
             value={formik.values.resetCode}
           />
-          {((formik.touched.resetCode && formik.errors.resetCode) ||
-            fError) && (
-            <p className="text-xs text-red-500 flex items-center mt-2">
+          {((formik.touched.resetCode && formik.errors.resetCode) || error) && (
+            <p className="text-xs text-red-500 flex mt-2">
               <AiOutlineCloseCircle className="mr-1 text-base" />
-              {formik.errors.resetCode || fError}
+              {formik.errors.resetCode || error}
             </p>
           )}
         </div>
@@ -124,3 +186,9 @@ export default function VerifyCodeForm() {
     </form>
   );
 }
+VerifyCodeForm.propTypes = {
+  tools: PropTypes.shape({
+    formMail: PropTypes.object.isRequired,
+    setFormMail: PropTypes.func.isRequired,
+  }).isRequired,
+};

@@ -5,10 +5,16 @@ import { useContext } from "react";
 import { TokenContext } from "../../Context/TokenContext";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import axios from "axios";
+import PropTypes from "prop-types";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 
-export default function PasswordResetForm() {
-  const { handleResetPassword, fMail, setToken, cleanStart } =
-    useContext(TokenContext);
+export default function PasswordResetForm({ tools }) {
+  const { formMail, setFormMail } = tools;
+  // const { handleResetPassword, fMail, setToken, cleanStart } =
+  //   useContext(TokenContext);
+  const { setToken } = useContext(TokenContext);
+
   const navigate = useNavigate();
   const validationSchema = Yup.object({
     password: Yup.string()
@@ -24,7 +30,7 @@ export default function PasswordResetForm() {
   });
   const formik = useFormik({
     initialValues: {
-      email: fMail.email,
+      email: formMail.email,
       password: "",
       confirmPassword: "",
     },
@@ -33,7 +39,7 @@ export default function PasswordResetForm() {
       return toast
         .promise(
           handleResetPassword({
-            email: fMail.email,
+            email: formMail.email,
             newPassword: values.password,
           }),
           {
@@ -45,12 +51,24 @@ export default function PasswordResetForm() {
         .then((res) => {
           setToken(res.data.token);
           localStorage.setItem("token", res.data.token);
-          cleanStart();
+          // cleanStart();
+          setFormMail({ email: null, verified: false });
           navigate("/");
         })
-        .catch((err) => err.status === 400 && cleanStart());
+        .catch(
+          (err) =>
+            err.status === 400 && setFormMail({ email: null, verified: false })
+        );
     },
   });
+
+  async function handleResetPassword(values) {
+    const res = await axios
+      .put("https://ecommerce.routemisr.com/api/v1/auth/resetPassword", values)
+      .catch((err) => Promise.reject(err));
+    return res;
+  }
+
   return (
     <div className="space-y-4 text-gray-600 mb-6">
       <div className="flex items-start">
@@ -79,7 +97,8 @@ export default function PasswordResetForm() {
                   placeholder="New Password"
                 />
                 {formik.touched.password && formik.errors.password && (
-                  <p className="text-red-500 text-sm mt-1" role="alert">
+                  <p className="text-xs text-red-500 flex mt-2">
+                    <AiOutlineCloseCircle className="mr-1 text-base" />
                     {formik.errors.password}
                   </p>
                 )}
@@ -107,7 +126,8 @@ export default function PasswordResetForm() {
                 />
                 {formik.touched.confirmPassword &&
                   formik.errors.confirmPassword && (
-                    <p className="text-red-500 text-sm mt-1" role="alert">
+                    <p className="text-xs text-red-500 flex mt-2">
+                      <AiOutlineCloseCircle className="mr-1 text-base" />
                       {formik.errors.confirmPassword}
                     </p>
                   )}
@@ -133,3 +153,10 @@ export default function PasswordResetForm() {
     </div>
   );
 }
+
+PasswordResetForm.propTypes = {
+  tools: PropTypes.shape({
+    formMail: PropTypes.object.isRequired,
+    setFormMail: PropTypes.func.isRequired,
+  }).isRequired,
+};

@@ -8,7 +8,6 @@ export default function Wishlist() {
     useContext(WishlistContext);
 
   useEffect(() => {
-    console.log(wishlist.length, wishlistItems.length);
     if (wishlist.length !== wishlistItems.length) getWishlist();
   }, [wishlist]);
 

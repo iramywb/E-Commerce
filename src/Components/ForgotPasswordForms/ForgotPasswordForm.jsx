@@ -1,14 +1,27 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { TokenContext } from "../../Context/TokenContext";
-import { useContext } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { FiMail, FiShield } from "react-icons/fi";
 import { FaLock } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import PropTypes from "prop-types";
 
-export default function ForgotPasswordForm() {
-  const { handleForgotPassword, fError } = useContext(TokenContext);
+export default function ForgotPasswordForm({tools}) {
+  const { setFormMail } = tools;
+  // const { handleForgotPassword, fError } = useContext(TokenContext);
+  const [error, setError] = useState(null);
+  async function handleForgotPassword(values) {
+    // if (values.email && formMail.email) values = { email };
+    const res = await axios
+      .post("https://ecommerce.routemisr.com/api/v1/auth/forgotPasswords", {
+        email: values.email,
+      })
+      .catch((err) => setError(err.response.data.message));
+    // setEmailHandler(res, values.email);
+    if (res?.data.statusMsg === "success") setFormMail((prev) => ({ ...prev, email: values.email }));
+    return res;
+  }
   const validationSchema = Yup.object({
     email: Yup.string()
       .email("Invalid email")
@@ -25,6 +38,7 @@ export default function ForgotPasswordForm() {
     validationSchema,
     onSubmit: async (values) => await handleForgotPassword(values),
   });
+  useEffect(() => setError(null), [formik.values.email]);
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="space-y-6">
@@ -72,10 +86,10 @@ export default function ForgotPasswordForm() {
             onBlur={formik.handleBlur}
             value={formik.values.email}
           />
-          {((formik.touched.email && formik.errors.email) || fError) && (
-            <p className="text-xs text-red-500 flex items-center mt-2">
+          {((formik.touched.email && formik.errors.email) || error) && formik.isValid && (
+            <p className="text-xs text-red-500 flex mt-2">
               <AiOutlineCloseCircle className="mr-1 text-base" />
-              {formik.errors.email || fError}
+              {formik.errors.email || error}
             </p>
           )}
         </div>
@@ -92,3 +106,8 @@ export default function ForgotPasswordForm() {
     </form>
   );
 }
+ForgotPasswordForm.propTypes = {
+  tools: PropTypes.shape({
+    setFormMail: PropTypes.func.isRequired,
+  }).isRequired,
+};
