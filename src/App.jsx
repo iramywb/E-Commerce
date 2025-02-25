@@ -21,6 +21,7 @@ import Wishlist from "./Pages/Wishlist/Wishlist";
 import ForgotPassword from "./Pages/ForgotPassword/ForgotPassword";
 import NavActionsProvider from "./Context/NavActionsContext";
 import ProductsContextProvider from "./Context/ProductsContext";
+import Brands from "./Pages/Brands/Brands";
 
 export default function App() {
   const routes = createBrowserRouter([
@@ -69,6 +70,14 @@ export default function App() {
           element: (
             <ProtectedRoutes>
               <Categories />
+            </ProtectedRoutes>
+          ),
+        },
+        {
+          path: "brands",
+          element: (
+            <ProtectedRoutes>
+              <Brands />
             </ProtectedRoutes>
           ),
         },
