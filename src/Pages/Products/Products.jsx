@@ -4,16 +4,24 @@ import { GoSearch } from "react-icons/go";
 import { ProductsContext } from "../../Context/ProductsContext";
 import ProductItem from "../../Components/ProductItem/ProductItem";
 import Loader from "../../Components/Loader/Loader";
+import Pagination from "../../Components/Pagination/Pagination";
 
 export default function Products() {
   const { displaySearch, search, handleSearch } = useContext(NavActionsContext);
   const { getProducts } = useContext(ProductsContext);
 
-  const [products, setProducts] = useState([]);
-    
-    useEffect(() => {
-      getProducts().then((res) => setProducts(res.data.data));
-    }, []);
+  const [products, setProducts] = useState(null);
+
+  function updateProducts(page = 1) {
+    if (products && (products.metadata.numberOfPages < page || page < 1))
+      return;
+    setProducts(null);
+    getProducts(page).then((res) => setProducts(res.data));
+  }
+
+  useEffect(() => {
+    getProducts().then((res) => setProducts(res.data));
+  }, []);
 
   useEffect(() => {
     const cleanup = displaySearch();
@@ -35,23 +43,30 @@ export default function Products() {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap">
-        {products.length > 0 ?
-        products.map(
-          (product) =>
-            product.title.toLowerCase().includes(search.toLowerCase()) && (
-              <div
-                className="p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 2xl:w-80"
-                key={product.id}
-              >
-                <ProductItem product={product} key={product.id} />
-              </div>
-            )
-        ) : (
-          <Loader />
-        )
-        }
-      </div>
+      {products ? (
+        <>
+          <div className="flex flex-wrap">
+            {products.data.map(
+              (product) =>
+                product.title.toLowerCase().includes(search.toLowerCase()) && (
+                  <div
+                    className="p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 2xl:w-80"
+                    key={product.id}
+                  >
+                    <ProductItem product={product} key={product.id} />
+                  </div>
+                )
+            )}
+          </div>
+          <Pagination
+            currentPage={products.metadata.currentPage}
+            totalPages={products.metadata.numberOfPages}
+            onPageChange={(page) => updateProducts(page)}
+          />
+        </>
+      ) : (
+        <Loader />
+      )}
     </section>
   );
 }

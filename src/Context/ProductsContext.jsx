@@ -5,9 +5,9 @@ export const ProductsContext = createContext();
 
 export default function ProductsContextProvider({ children }) {
 
-  function getProducts() {
+  function getProducts(page) {
     return axios
-      .get("https://ecommerce.routemisr.com/api/v1/products")
+      .get("https://ecommerce.routemisr.com/api/v1/products?limit=20&page=" + page)
   }
 
   return (
