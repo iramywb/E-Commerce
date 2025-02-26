@@ -3,7 +3,7 @@ import Loader from "../../Components/Loader/Loader";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
 import { FaHeart, FaRegHeart, FaRegTrashAlt } from "react-icons/fa";
 import { CartContext } from "../../Context/CartContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { WishlistContext } from "../../Context/WishlistContext";
 
 export default function Cart() {
@@ -11,6 +11,7 @@ export default function Cart() {
     useContext(CartContext);
   const { wishlist, addToWishlist, removeFromWishlist } =
     useContext(WishlistContext);
+  const navigate = useNavigate();
 
   if (cart)
     return (
@@ -138,16 +139,17 @@ export default function Cart() {
                 </span>
               </li>
             </ul>
-            <div className="mt-8 space-y-2">
+            <div className="mt-8 text-center space-y-2">
               <button
-                type="button"
-                className="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-gray-800 hover:bg-gray-900 text-white rounded-md"
+                disabled={!cart.cartId || !cart.data.totalItems}
+                onClick={() => navigate("/checkout")}
+                className="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-gray-800 hover:bg-gray-900 text-white rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                Checkout
+                Proceed to Checkout
               </button>
               <Link
                 to="/"
-                className="block text-center text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-transparent hover:bg-gray-100 text-gray-800 border border-gray-300 rounded-md"
+                className="block text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-transparent hover:bg-gray-100 text-gray-800 border border-gray-300 rounded-md"
               >
                 Continue Shopping
               </Link>

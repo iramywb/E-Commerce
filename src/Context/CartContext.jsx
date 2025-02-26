@@ -331,6 +331,7 @@ export default function CartContextProvider({ children }) {
         clearCart,
         cart,
         pendingRequests: Array.from(pendingRequests),
+        getCart,
       }}
     >
       {children}

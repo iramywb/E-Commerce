@@ -7,7 +7,7 @@ import { FaLock } from "react-icons/fa";
 import axios from "axios";
 import PropTypes from "prop-types";
 
-export default function ForgotPasswordForm({tools}) {
+export default function ForgotPasswordForm({ tools }) {
   const { setFormMail } = tools;
   // const { handleForgotPassword, fError } = useContext(TokenContext);
   const [error, setError] = useState(null);
@@ -19,7 +19,8 @@ export default function ForgotPasswordForm({tools}) {
       })
       .catch((err) => setError(err.response.data.message));
     // setEmailHandler(res, values.email);
-    if (res?.data.statusMsg === "success") setFormMail((prev) => ({ ...prev, email: values.email }));
+    if (res?.data.statusMsg === "success")
+      setFormMail((prev) => ({ ...prev, email: values.email }));
     return res;
   }
   const validationSchema = Yup.object({
@@ -50,7 +51,7 @@ export default function ForgotPasswordForm({tools}) {
             <FaLock className="w-5 h-5 mr-2 mt-1 text-green-600 flex-shrink-0" />
             <div className="flex-1">
               Enter your registered email below to receive a secure verification
-              code. This 6-digit code will:
+              code. This code will:
               <ol className="list-disc mt-2 space-y-2">
                 <li className="flex items-center">
                   <FiMail className="w-4 h-4 mr-2 text-gray-500 flex-shrink-0" />
@@ -86,12 +87,13 @@ export default function ForgotPasswordForm({tools}) {
             onBlur={formik.handleBlur}
             value={formik.values.email}
           />
-          {((formik.touched.email && formik.errors.email) || error) && formik.isValid && (
-            <p className="text-xs text-red-500 flex mt-2">
-              <AiOutlineCloseCircle className="mr-1 text-base" />
-              {formik.errors.email || error}
-            </p>
-          )}
+          {((formik.touched.email && formik.errors.email) || error) &&
+            formik.isValid && (
+              <p className="text-xs text-red-500 flex mt-2">
+                <AiOutlineCloseCircle className="mr-1 text-base" />
+                {formik.errors.email || error}
+              </p>
+            )}
         </div>
       </div>
       <div className="!mt-8">

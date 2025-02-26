@@ -22,6 +22,7 @@ import ForgotPassword from "./Pages/ForgotPassword/ForgotPassword";
 import NavActionsProvider from "./Context/NavActionsContext";
 import ProductsContextProvider from "./Context/ProductsContext";
 import Brands from "./Pages/Brands/Brands";
+import Checkout from "./Pages/Checkout/Checkout";
 
 export default function App() {
   const routes = createBrowserRouter([
@@ -94,6 +95,14 @@ export default function App() {
           element: (
             <ProtectedRoutes>
               <ProductDetails />
+            </ProtectedRoutes>
+          ),
+        },
+        {
+          path: "checkout",
+          element: (
+            <ProtectedRoutes>
+              <Checkout />
             </ProtectedRoutes>
           ),
         },
