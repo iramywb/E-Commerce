@@ -25,7 +25,6 @@ export default function LatestProducts() {
       {products ? (
         <>
           <div className="flex flex-wrap">
-            {console.log(products)}
             {products.data.map((product) => (
               <div
                 className="p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 2xl:w-80"
