@@ -1,5 +1,4 @@
-import { HiOutlineShoppingBag } from "react-icons/hi";
-// Loader.css
+import { HiOutlineShoppingBag } from "react-icons/hi2";
 import "./Loader.css";
 
 export default function Loader({ size }) {

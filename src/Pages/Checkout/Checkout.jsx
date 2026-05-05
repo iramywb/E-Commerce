@@ -40,7 +40,8 @@ export default function Checkout() {
       .catch((err) => err);
   }
   function onlineRequest(data) {
-    const params = { url: "http://localhost:5173" };
+    // const params = { url: "http://localhost:5173" };
+    const params = { url: window.location.origin };
     return axios
       .post(
         "https://ecommerce.routemisr.com/api/v1/orders/checkout-session/" +
@@ -218,30 +219,6 @@ export default function Checkout() {
                   </div>
                 </label>
               </div>
-              {/* <label className="rounded-lg border border-gray-200 bg-gray-100 hover:bg-gray-50 p-4 ps-4 cursor-pointer">
-                <div className="flex items-start">
-                  <div className="flex h-5 items-center">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="cash"
-                      className="h-4 w-4 border-gray-300 text-green-400 bg-white focus:ring-0"
-                    />
-                  </div>
-                  <div className="ms-4 text-sm">
-                    <span className="font-medium leading-none text-gray-900">
-                      {" "}
-                      Payment on delivery{" "}
-                    </span>
-                    <p
-                      id="pay-on-delivery-text"
-                      className="mt-1 text-xs font-normal text-gray-500"
-                    >
-                      +$15 payment processing fee
-                    </p>
-                  </div>
-                </div>
-              </label> */}
             </div>
           </div>
           <div className="!mt-8">

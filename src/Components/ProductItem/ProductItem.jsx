@@ -23,10 +23,10 @@ export default function ProductItem({ product }) {
     return (
       <div className="product inner p-2 relative group">
         <Link to={`/product/${product.id}`}>
-          <LazyLoad className="min-h-48" offset={100}>
+          <LazyLoad className="min-h-60" offset={100}>
             <img
               src={product.imageCover}
-              className="w-full max-h-48 object-contain"
+              className="w-full max-h-60 object-contain"
               alt={product.title}
             />
           </LazyLoad>

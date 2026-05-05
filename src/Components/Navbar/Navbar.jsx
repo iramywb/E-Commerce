@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import "./Navbar.css";
 import { FaRegHeart } from "react-icons/fa";
 import { Link, NavLink } from "react-router-dom";
@@ -6,11 +6,11 @@ import logo1 from "./../../assets/images/freshcart-logo.svg";
 import logo2 from "./../../assets/images/cart-logo.svg";
 import { TokenContext } from "../../Context/TokenContext";
 import { CartContext } from "../../Context/CartContext";
-import { HiOutlineShoppingBag } from "react-icons/hi";
 import { WishlistContext } from "../../Context/WishlistContext";
 import { CgProfile } from "react-icons/cg";
 import { NavActionsContext } from "../../Context/NavActionsContext";
 import { GoSearch } from "react-icons/go";
+import { HiOutlineHeart, HiOutlineShoppingBag, HiOutlineUserCircle } from "react-icons/hi2";
 
 export default function Navbar() {
   const { token, setToken } = useContext(TokenContext);
@@ -104,7 +104,7 @@ export default function Navbar() {
                 />
               </Link>
             </li>
-            {links.map((link, index) => (
+            {token && links.map((link, index) => (
               <li key={index} className="max-lg:border-b max-lg:py-3 px-3">
                 <NavLink
                   to={link.path}
@@ -135,7 +135,7 @@ export default function Navbar() {
           )}
           <div className="group relative">
             <div className="hover:text-green-600 text-gray-600 text-[15px] font-bold lg:hover:fill-green-600 block cursor-pointer">
-              <CgProfile className="text-2xl" />
+              <HiOutlineUserCircle className="w-7 h-7" />
             </div>
             <ul className="absolute shadow-lg bg-white lg:top-7 max-lg:top-10 left-1/2 -translate-x-1/2 min-w-[150px] max-h-0 overflow-hidden group-hover:opacity-100 group-hover:max-h-[700px] px-6 group-hover:pb-4 group-hover:pt-6 transition-all duration-500">
               {token ? (
@@ -185,7 +185,7 @@ export default function Navbar() {
             to="/wishlist"
             className="relative hover:text-green-600 cursor-pointer"
           >
-            <FaRegHeart className="text-2xl" />
+            <HiOutlineHeart className="w-7 h-7" />
             {wishlist?.length > 0 && (
               <span className="absolute left-full -translate-x-1/4 -ml-1 top-0 rounded-full bg-green-700 px-1 py-0 text-xs text-white">
                 {wishlist.length > 99 ? "+99" : wishlist.length}
@@ -196,7 +196,7 @@ export default function Navbar() {
             to="/cart"
             className="relative hover:text-green-600 cursor-pointer"
           >
-            <HiOutlineShoppingBag className="text-2xl" />
+            <HiOutlineShoppingBag className="w-7 h-7" />
             {cart?.data.totalItems > 0 && (
               <span className="absolute left-full -translate-x-1/4 -ml-1 top-0 rounded-full bg-green-700 px-1 py-0 text-xs text-white">
                 {cart.data.totalItems > 99 ? "+99" : cart.data.totalItems}
